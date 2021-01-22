@@ -27,6 +27,11 @@ public class ContactParser {
         }
         return contact;
     }
+
+    public String toString(Contact contact) {
+        return String.format("%s[%s:%s]", contact.getName(), contact.getType(), contact.getContact());
+    }
+
     //--------------------------------------------------------------------------------
     private boolean validateUserString(String userStr) {
         return userStr.matches(CONTACT_REGEX_PATTERN);

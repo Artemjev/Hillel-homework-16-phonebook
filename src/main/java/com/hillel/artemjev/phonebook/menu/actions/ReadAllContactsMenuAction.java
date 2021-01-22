@@ -26,13 +26,6 @@ public class ReadAllContactsMenuAction implements MenuAction {
                     contact.getType(),
                     contact.getContact());
         }
-
-//        for (int i = 0; i < contacts.size(); i++) {
-//            System.out.printf("%3d - %s, %s: %s\n", i + 1,
-//                    contacts.get(i).getName(),
-//                    contacts.get(i).getType(),
-//                    contacts.get(i).getContact());
-//        }
         System.out.println("*********************************");
     }
 
