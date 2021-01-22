@@ -1,5 +1,6 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
+import com.hillel.artemjev.phonebook.contact.ContactType;
 import com.hillel.artemjev.phonebook.service.ContactsService;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
 
@@ -7,7 +8,6 @@ import java.util.Scanner;
 
 
 public class AddContactMenuAction implements MenuAction {
-
     private ContactsService contactsService;
     private Scanner sc;
 
@@ -23,19 +23,27 @@ public class AddContactMenuAction implements MenuAction {
         System.out.print("Введите имя: ");
         String name = sc.nextLine();
 
-        System.out.print("Введите телефон: ");
-        String phone = sc.nextLine();
-
-        if (!validatePhone(phone)) {
-            System.out.println("Некорректный формат ввода.");
-            System.out.println("Наиболее полный формат номер выгдядит так: +300000000000 , где 0 - любая цифра.");
-            System.out.println("Введенный номер должен хотя-бы частично соответствовать этому формату.");
+        System.out.print("Введите тип контакта (PHONE/EMAIL): ");
+        ContactType type;
+        try {
+            type = ContactType.valueOf(sc.nextLine().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Некорректно введен тип контакта.");
             System.out.println("Контакт не добавлен.");
             System.out.println("*********************************");
             return;
         }
 
-        contactsService.add(name, phone);
+        System.out.printf("Введите %s: ", type);
+        String contact = sc.nextLine();
+        if (!validateContact(contact, type)) {
+            System.out.printf("Некорректный формат ввода %s.\n", type);
+            System.out.println("Контакт не добавлен.");
+            System.out.println("*********************************");
+            return;
+        }
+
+        contactsService.add(name, type, contact);
         System.out.println("Контакт добавлен");
         System.out.println("*********************************");
     }
@@ -46,8 +54,18 @@ public class AddContactMenuAction implements MenuAction {
     }
 
     //------------------------------------------------------------------------------
-    private boolean validatePhone(String phone) {
-        return phone.matches("(\\+?3)?\\d{0,11}");
+    private boolean validateContact(String contact, ContactType type) {
+        boolean isValid = false;
+        switch (type) {
+            case PHONE:
+                isValid = contact.matches("(?:\\+380|380|80|0)?(\\d{1,9})");
+                break;
+            case EMAIL:
+                isValid = contact.matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+");
+                ;
+                break;
+        }
+        return isValid;
     }
 }
 

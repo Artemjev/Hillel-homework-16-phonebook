@@ -1,6 +1,7 @@
 package com.hillel.artemjev.phonebook.service;
 
-import com.hillel.artemjev.phonebook.contacts.Contact;
+import com.hillel.artemjev.phonebook.contact.Contact;
+import com.hillel.artemjev.phonebook.contact.ContactType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +27,14 @@ public class InMemoryContactsService implements ContactsService {
     }
 
     @Override
-    public void add(String name, String phone) {
-        contacts.add(new Contact(name, phone));
+    public void add(String name, ContactType type, String contact) {
+        contacts.add(new Contact(name, type, contact));
     }
 
     @Override
     public List<Contact> searchByPhonePart(String phoneToSearch) {
         return contacts.stream()
-                .filter(contact -> contact.getPhone().contains(phoneToSearch))
+                .filter(contact -> contact.getContact().contains(phoneToSearch))
                 .collect(Collectors.toList());
     }
 

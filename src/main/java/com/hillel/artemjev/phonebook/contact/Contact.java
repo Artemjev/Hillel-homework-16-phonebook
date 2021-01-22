@@ -1,4 +1,4 @@
-package com.hillel.artemjev.phonebook.contacts;
+package com.hillel.artemjev.phonebook.contact;
 
 
 import lombok.AllArgsConstructor;
@@ -8,5 +8,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class Contact {
     private String name;
-    private String phone;
+    private ContactType type;
+    private String contact;
 }

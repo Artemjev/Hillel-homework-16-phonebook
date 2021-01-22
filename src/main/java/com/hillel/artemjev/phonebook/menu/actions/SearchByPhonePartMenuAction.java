@@ -1,6 +1,6 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.contacts.Contact;
+import com.hillel.artemjev.phonebook.contact.Contact;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
 import com.hillel.artemjev.phonebook.service.ContactsService;
 
@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class SearchByPhonePartMenuAction implements MenuAction {
-
     private ContactsService contactsService;
     private Scanner sc;
 
@@ -31,8 +30,8 @@ public class SearchByPhonePartMenuAction implements MenuAction {
 
         if (!validatePhone(phoneToSearch)) {
             System.out.println("Некорректный формат ввода.");
-            System.out.println("Наиболее полный формат номер выгдядит так: +300000000000");
-            System.out.println(", где 0 - любая цифра. Часть номерадолжна соответствовать этому формату.");
+            System.out.println("Наиболее полный формат номер выгдядит так: +380?????????");
+            System.out.println(", где ? - любая цифра. Часть номера должна соответствовать этому формату.");
             System.out.println("*********************************");
             return;
         }
@@ -49,6 +48,6 @@ public class SearchByPhonePartMenuAction implements MenuAction {
 
     //------------------------------------------------------------------------------
     private boolean validatePhone(String phone) {
-        return phone.matches("(\\+?3)?\\d{0,11}");
+        return phone.matches("(?:\\+380|380|80|0)?(\\d{1,9})");
     }
 }

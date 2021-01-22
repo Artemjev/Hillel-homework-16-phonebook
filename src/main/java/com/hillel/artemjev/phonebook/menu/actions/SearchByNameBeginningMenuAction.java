@@ -1,15 +1,13 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.contacts.Contact;
+import com.hillel.artemjev.phonebook.contact.Contact;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
 import com.hillel.artemjev.phonebook.service.ContactsService;
 
 import java.util.List;
 import java.util.Scanner;
 
-
 public class SearchByNameBeginningMenuAction implements MenuAction {
-
     private ContactsService contactsService;
     private Scanner sc;
 
