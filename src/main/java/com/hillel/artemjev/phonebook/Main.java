@@ -4,21 +4,29 @@ import com.hillel.artemjev.phonebook.contact.ContactParser;
 import com.hillel.artemjev.phonebook.contact.ContactType;
 import com.hillel.artemjev.phonebook.menu.actions.*;
 import com.hillel.artemjev.phonebook.menu.Menu;
+import com.hillel.artemjev.phonebook.service.ContactsNioService;
 import com.hillel.artemjev.phonebook.service.ContactsService;
 import com.hillel.artemjev.phonebook.service.FileContactsService;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        File file = new File("contacts.txt");
-        if (file.exists()) {
-            file.delete();
+        Path path= Path.of("contacts.txt");
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        ContactsService contactsService = new ContactsNioService(path, new ContactParser(), ByteBuffer.allocate(100));
+//        ContactsService contactsService = new ContactsNioService("contacts.txt", new ContactParser(), ByteBuffer.allocate(100));
 
-        ContactsService contactsService = new FileContactsService(file, new ContactParser());
         contactsService.add("Aaa", ContactType.valueOf("PHONE"), "111");
         contactsService.add("bbb", ContactType.valueOf("PHONE"), "222");
         contactsService.add("ccc", ContactType.valueOf("PHONE"), "333");
