@@ -1,31 +1,26 @@
 package com.hillel.artemjev.phonebook;
 
-import com.hillel.artemjev.phonebook.contact.ContactParser;
+import com.hillel.artemjev.phonebook.util.ContactParser;
 import com.hillel.artemjev.phonebook.contact.ContactType;
 import com.hillel.artemjev.phonebook.menu.actions.*;
 import com.hillel.artemjev.phonebook.menu.Menu;
 import com.hillel.artemjev.phonebook.service.ContactsNioService;
 import com.hillel.artemjev.phonebook.service.ContactsService;
-import com.hillel.artemjev.phonebook.service.FileContactsService;
+import com.hillel.artemjev.phonebook.util.NioFileUtil;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
+
 import java.nio.file.Path;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Path path= Path.of("contacts.txt");
-        try {
-            Files.deleteIfExists(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ContactsService contactsService = new ContactsNioService(path, new ContactParser(), ByteBuffer.allocate(100));
-//        ContactsService contactsService = new ContactsNioService("contacts.txt", new ContactParser(), ByteBuffer.allocate(100));
+        Path path = Path.of("contacts.txt");
+        NioFileUtil fileUtil = new NioFileUtil(path, 7);
+        fileUtil.deleteFile();
+
+        ContactsService contactsService = new ContactsNioService(path, new ContactParser(), fileUtil);
+//        ContactsService contactsService = new ContactsNioService("contacts.txt", new ContactParser(), fileUtil);
 
         contactsService.add("Aaa", ContactType.valueOf("PHONE"), "111");
         contactsService.add("bbb", ContactType.valueOf("PHONE"), "222");

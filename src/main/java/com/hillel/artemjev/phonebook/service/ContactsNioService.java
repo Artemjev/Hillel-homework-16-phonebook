@@ -1,106 +1,79 @@
 package com.hillel.artemjev.phonebook.service;
 
 import com.hillel.artemjev.phonebook.contact.Contact;
-import com.hillel.artemjev.phonebook.contact.ContactParser;
+import com.hillel.artemjev.phonebook.util.ContactParser;
 import com.hillel.artemjev.phonebook.contact.ContactType;
+import com.hillel.artemjev.phonebook.util.NioFileUtil;
 
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ContactsNioService implements ContactsService {
     private Path path;
     private ContactParser parser;
-    private ByteBuffer buffer;
+    private NioFileUtil fileUtil;
 
-    public ContactsNioService(Path path, ContactParser parser, ByteBuffer buffer) {
+    public ContactsNioService(Path path, ContactParser parser, NioFileUtil fileUtil) {
         this.path = path;
         this.parser = parser;
-        this.buffer = buffer;
-        try {
-            Files.writeString(path, "", StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.fileUtil = fileUtil;
+        fileUtil.createFileIfNotExist();
     }
 
-    public ContactsNioService(String pathString, ContactParser parser, ByteBuffer buffer) {
-        this(Path.of(pathString), parser, buffer);
+    public ContactsNioService(String pathString, ContactParser parser, NioFileUtil fileUtil) {
+        this(Path.of(pathString), parser, fileUtil);
     }
 
-    //    TODO: хорошобы доработать (не хватило ни времени, ни мозгов).
-    //     Читать не весь файл в одну строку, а вычитывать размер буфера. Проверять есть ли в считаном перевод строки.
-    //     Если - есть парсить то, что до перевода строки и добовлять в возращаемый список контактов
-    //     (остаток строки сохранять и добовлять его к следующему считыванию).
     @Override
     public List<Contact> getAll() {
-        String text = "";
-        try (FileChannel channel = (FileChannel) Files.newByteChannel(path)) {
-            while (channel.read(buffer) != -1) {
-                buffer.flip();
-                text += new String(buffer.array(), 0, buffer.limit());
-                buffer.clear();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return parser.parseList(text, "\n");
+        List<Contact> contactList = new LinkedList<>();
+        fileUtil.readByLine(str -> contactList.add(parser.parse(str)));
+        return contactList.stream().filter(contact -> contact != null).collect(Collectors.toList());
     }
 
-    //TODO: было несколько вариантов, как реализовать этот метод. Выбрал самый простой сугубо из-за нехватки времени.
-    @Override
     public void remove(int index) {
         List<Contact> contactList = getAll();
         contactList.remove(index);
-        try (FileChannel channel = (FileChannel) Files.newByteChannel(path, StandardOpenOption.WRITE,
-                StandardOpenOption.APPEND)) {
-            Files.writeString(path, "", StandardOpenOption.TRUNCATE_EXISTING);
-            for (Contact contact : contactList) {
-                String contactStr = parser.toString(contact) + "\n";
-                buffer.put(contactStr.getBytes(), 0, contactStr.length());
-                buffer.flip();
-                channel.write(buffer);
-                buffer.clear();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        fileUtil.cleanFile();
+        for (Contact contact : contactList) {
+            fileUtil.writeString(parser.toString(contact) + "\n");
         }
+
     }
 
     @Override
     public void add(String name, ContactType type, String contact) {
-        try (FileChannel channel = (FileChannel) Files.newByteChannel(path, StandardOpenOption.WRITE,
-                StandardOpenOption.APPEND)) {
-            String contactStr = parser.toString(new Contact(name, type, contact)) + "\n";
-            //TODO: предусмотреть случай, когда добовляемая строка не влезет в буфер.
-            buffer.put(contactStr.getBytes(), 0, contactStr.length());
-            buffer.flip();
-            channel.write(buffer);
-            buffer.clear();
-        } catch (IOException e) {
-            e.printStackTrace();
+        String contactStr = parser.toString(new Contact(name, type, contact)) + "\n";
+        if (contactStr != null) {
+            fileUtil.writeString(contactStr);
         }
     }
 
-    //    TODO: анадогично getAll(). Хорошо бы не считывать все контакты из файла сразу, а вычитывать размер буфера.
-    //     Проверять есть ли в считаном перевод строки. Если - есть парсить то, что до перевода строки,
-    //     проверять соответствует ли контакт условию поиска. Если да - добовлять в возращаемый список контактов
     @Override
     public List<Contact> searchByPhonePart(String phoneToSearch) {
-        return getAll().stream()
-                .filter(contact -> contact.getContact().contains(phoneToSearch))
-                .collect(Collectors.toList());
+        List<Contact> contactList = new LinkedList<>();
+        fileUtil.readByLine(str -> {
+            Contact contact = parser.parse(str);
+            if (contact != null
+                    && contact.getType().equals(ContactType.PHONE)
+                    && contact.getContact().contains(phoneToSearch)) {
+                contactList.add(contact);
+            }
+        });
+        return contactList;
     }
 
     @Override
     public List<Contact> searchByNameBeginning(String nameToSearch) {
-        return getAll().stream()
-                .filter(contact -> contact.getName().toUpperCase().startsWith(nameToSearch.toUpperCase()))
-                .collect(Collectors.toList());
+        List<Contact> contactList = new LinkedList<>();
+        fileUtil.readByLine(str -> {
+            Contact contact = parser.parse(str);
+            if (contact != null && contact.getName().toUpperCase().startsWith(nameToSearch.toUpperCase())) {
+                contactList.add(contact);
+            }
+        });
+        return contactList;
     }
 }

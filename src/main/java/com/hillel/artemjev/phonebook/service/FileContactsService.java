@@ -1,7 +1,7 @@
 package com.hillel.artemjev.phonebook.service;
 
 import com.hillel.artemjev.phonebook.contact.Contact;
-import com.hillel.artemjev.phonebook.contact.ContactParser;
+import com.hillel.artemjev.phonebook.util.ContactParser;
 import com.hillel.artemjev.phonebook.contact.ContactType;
 
 import java.io.*;
