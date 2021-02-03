@@ -1,51 +1,51 @@
 package com.hillel.artemjev.phonebook.menu;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 
 public class Menu {
-    private MenuAction[] actions;
+    private List<MenuAction> actions;
     private Scanner sc;
 
     public Menu(Scanner scanner) {
-        this.actions = new MenuAction[0];
+        this.actions = new ArrayList<>();
         this.sc = scanner;
     }
 
-    public Menu(MenuAction[] actions, Scanner sc) {
+    public Menu(List<MenuAction> actions, Scanner sc) {
         this.actions = actions;
         this.sc = sc;
     }
 
     public void addAction(MenuAction action) {
-        actions = Arrays.copyOf(actions, actions.length + 1);
-        actions[actions.length - 1] = action;
+        actions.add(action);
     }
 
     public void run() {
         while (true) {
-            showMenu();
-            int choice = getMenuIndexFromUser();
+            System.out.println("\nВыберете пункт меню:");
+            List<MenuAction> menu = actions.stream()
+                    .filter(action -> action.isVisible())
+                    .collect(Collectors.toList());
 
-            if (!validateMenuIndex(choice)) {
-                System.out.printf("Значение должно быть от 1 до %d.\n", actions.length);
+            for (int i = 0; i < menu.size(); i++) {
+                System.out.printf("%2d - %s\n", i + 1, menu.get(i).getName());
+            }
+            int choice = getMenuIndexFromUser();
+            --choice;
+            if (choice < 0 && choice >= menu.size()) {
+                System.out.printf("Значение должно быть от 1 до %d.\n", menu.size());
                 continue;
             }
-
-            actions[choice].doAction();
-            if (actions[choice].closeAfter()) break;
+            menu.get(choice).doAction();
+            if (menu.get(choice).closeAfter()) break;
         }
     }
 
     //-----------------------------------------------------------------------------------------------
-    private void showMenu() {
-        System.out.println("\nВыберете пункт меню:");
-        for (int i = 0; i < actions.length; i++) {
-            System.out.printf("%2d - %s\n", i + 1, actions[i].getName());
-        }
-    }
-
     private int getMenuIndexFromUser() {
         while (true) {
             System.out.print("\nEnter your choice: ");
@@ -57,10 +57,6 @@ public class Menu {
         }
         int choice = sc.nextInt();
         sc.nextLine();
-        return choice - 1;
-    }
-
-    private boolean validateMenuIndex(int choice) {
-        return choice >= 0 && choice < actions.length;
+        return choice;
     }
 }

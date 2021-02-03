@@ -1,15 +1,15 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.contact.ContactType;
-import com.hillel.artemjev.phonebook.service.ContactsService;
+import com.hillel.artemjev.phonebook.domain.ContactType;
+import com.hillel.artemjev.phonebook.service.contacts.ContactsService;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
 
 import java.util.Scanner;
 
 
 public class AddContactMenuAction implements MenuAction {
-    private ContactsService contactsService;
-    private Scanner sc;
+    final private ContactsService contactsService;
+    final private Scanner sc;
 
     public AddContactMenuAction(ContactsService contactsService, Scanner sc) {
         this.contactsService = contactsService;
@@ -18,6 +18,10 @@ public class AddContactMenuAction implements MenuAction {
 
     @Override
     public void doAction() {
+        if (!contactsService.hasToken()) {
+            System.out.println("Время сеанса истекло. Неообходимо повторно войти в систему.\n");
+            return;
+        }
         System.out.println("\n*********************************");
         System.out.println("Добавление контакта");
         System.out.print("Введите имя: ");
@@ -51,6 +55,11 @@ public class AddContactMenuAction implements MenuAction {
     @Override
     public String getName() {
         return "Добавить контакт";
+    }
+
+    @Override
+    public boolean isVisible() {
+        return contactsService.hasToken();
     }
 
     //------------------------------------------------------------------------------

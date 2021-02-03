@@ -1,50 +1,41 @@
 package com.hillel.artemjev.phonebook;
 
-import com.hillel.artemjev.phonebook.util.ContactParser;
-import com.hillel.artemjev.phonebook.contact.ContactType;
-import com.hillel.artemjev.phonebook.menu.actions.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.hillel.artemjev.phonebook.menu.Menu;
-import com.hillel.artemjev.phonebook.service.ContactsNioService;
-import com.hillel.artemjev.phonebook.service.ContactsService;
-import com.hillel.artemjev.phonebook.util.NioFileUtil;
+import com.hillel.artemjev.phonebook.menu.actions.*;
+import com.hillel.artemjev.phonebook.service.AccessToken;
+import com.hillel.artemjev.phonebook.service.contacts.ContactsApiService;
+import com.hillel.artemjev.phonebook.service.contacts.ContactsService;
+import com.hillel.artemjev.phonebook.service.user.UserApiService;
+import com.hillel.artemjev.phonebook.service.user.UserService;
 
-
-import java.nio.file.Path;
+import java.net.http.HttpClient;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Path path = Path.of("contacts.txt");
-        NioFileUtil fileUtil = new NioFileUtil(path, 7);
-        fileUtil.deleteFile();
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 
-        ContactsService contactsService = new ContactsNioService(path, new ContactParser(), fileUtil);
-//        ContactsService contactsService = new ContactsNioService("contacts.txt", new ContactParser(), fileUtil);
-
-        contactsService.add("Aaa", ContactType.valueOf("PHONE"), "111");
-        contactsService.add("bbb", ContactType.valueOf("PHONE"), "222");
-        contactsService.add("ccc", ContactType.valueOf("PHONE"), "333");
-        contactsService.add("DDd", ContactType.valueOf("PHONE"), "444");
-        contactsService.add("eee", ContactType.valueOf("PHONE"), "555");
-        contactsService.add("fff", ContactType.valueOf("PHONE"), "777");
-        contactsService.add("Ggg", ContactType.valueOf("PHONE"), "777");
-        contactsService.add("aabc", ContactType.valueOf("PHONE"), "888");
-        contactsService.add("Aaa", ContactType.valueOf("EMAIL"), "Aaa@gmail.com");
-        contactsService.add("bbb", ContactType.valueOf("EMAIL"), "bbb@gmail.com");
-        contactsService.add("ccc", ContactType.valueOf("EMAIL"), "ccc@gmail.com");
-        contactsService.add("DDd", ContactType.valueOf("EMAIL"), "DDd@gmail.com");
-        contactsService.add("eee", ContactType.valueOf("EMAIL"), "eee@gmail.com");
-        contactsService.add("fff", ContactType.valueOf("EMAIL"), "fff@gmail.com");
-        contactsService.add("Ggg", ContactType.valueOf("EMAIL"), "Ggg@gmail.com");
-        contactsService.add("aabc", ContactType.valueOf("EMAIL"), "aabc@gmail.com");
+        AccessToken token = new AccessToken();
+        UserService userService = new UserApiService(httpClient, objectMapper, token);
+        ContactsService contactsService = new ContactsApiService(httpClient, objectMapper, token);
 
         Menu menu = new Menu(sc);
+        menu.addAction(new LoginMenuAction(userService, sc));
+        menu.addAction(new RegistrationMenuAction(userService, sc));
+        menu.addAction(new ReadAllUsersMenuAction(userService, sc));
+//        menu.addAction(new ReadAllUsersWithAuthMenuAction(userService, sc));
         menu.addAction(new ReadAllContactsMenuAction(contactsService));
+        menu.addAction(new SearchByNameMenuAction(contactsService, sc));
+        menu.addAction(new SearchByContactMenuAction(contactsService, sc));
+//        menu.addAction(new SearchByNameBeginningMenuAction(contactsService, sc));
+//        menu.addAction(new SearchByPhonePartMenuAction(contactsService, sc));
+//        menu.addAction(new RemoveContactMenuAction(contactsService, sc));
         menu.addAction(new AddContactMenuAction(contactsService, sc));
-        menu.addAction(new RemoveContactMenuAction(contactsService, sc));
-        menu.addAction(new SearchByPhonePartMenuAction(contactsService, sc));
-        menu.addAction(new SearchByNameBeginningMenuAction(contactsService, sc));
         menu.addAction(new ExitMenuAction());
         menu.run();
     }

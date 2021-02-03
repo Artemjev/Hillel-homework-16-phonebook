@@ -1,8 +1,8 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.contact.Contact;
+import com.hillel.artemjev.phonebook.domain.Contact;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
-import com.hillel.artemjev.phonebook.service.ContactsService;
+import com.hillel.artemjev.phonebook.service.contacts.ContactsService;
 
 import java.util.List;
 import java.util.Scanner;
@@ -23,6 +23,10 @@ public class SearchByPhonePartMenuAction implements MenuAction {
 
     @Override
     public void doAction() {
+        if (!contactsService.hasToken()) {
+            System.out.println("Время сеанса истекло. Неообходимо повторно войти в систему.\n");
+            return;
+        }
         System.out.println("\n*********************************");
         System.out.println("Поиск по части номера");
         System.out.print("Введите часть номера: ");
@@ -44,6 +48,11 @@ public class SearchByPhonePartMenuAction implements MenuAction {
             System.out.println("Контакты не найдены.");
         }
         System.out.println("*********************************");
+    }
+
+    @Override
+    public boolean isVisible() {
+        return contactsService.hasToken();
     }
 
     //------------------------------------------------------------------------------

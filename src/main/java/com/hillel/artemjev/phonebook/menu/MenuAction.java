@@ -9,4 +9,8 @@ public interface MenuAction {
     default boolean closeAfter() {
         return false;
     }
+
+    default boolean isVisible() {
+        return true;
+    }
 }

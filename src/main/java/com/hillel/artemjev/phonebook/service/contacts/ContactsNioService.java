@@ -1,8 +1,8 @@
-package com.hillel.artemjev.phonebook.service;
+package com.hillel.artemjev.phonebook.service.contacts;
 
-import com.hillel.artemjev.phonebook.contact.Contact;
+import com.hillel.artemjev.phonebook.domain.Contact;
 import com.hillel.artemjev.phonebook.util.ContactParser;
-import com.hillel.artemjev.phonebook.contact.ContactType;
+import com.hillel.artemjev.phonebook.domain.ContactType;
 import com.hillel.artemjev.phonebook.util.NioFileUtil;
 
 import java.nio.file.Path;
@@ -75,5 +75,16 @@ public class ContactsNioService implements ContactsService {
             }
         });
         return contactList;
+    }
+
+    //------------------------------------------------------------------
+    @Override
+    public List<Contact> searchByName(String nameToSearch) {
+        return null;
+    }
+
+    @Override
+    public List<Contact> searchByContact(String contactToSearch) {
+        return null;
     }
 }

@@ -7,18 +7,18 @@ import com.hillel.artemjev.phonebook.service.contacts.ContactsService;
 import java.util.List;
 import java.util.Scanner;
 
-public class SearchByNameBeginningMenuAction implements MenuAction {
+public class SearchByNameMenuAction implements MenuAction {
     private ContactsService contactsService;
     private Scanner sc;
 
-    public SearchByNameBeginningMenuAction(ContactsService contactsService, Scanner sc) {
+    public SearchByNameMenuAction(ContactsService contactsService, Scanner sc) {
         this.contactsService = contactsService;
         this.sc = sc;
     }
 
     @Override
     public String getName() {
-        return "Поиск по началу имени";
+        return "Поиск по имени";
     }
 
     @Override
@@ -28,13 +28,13 @@ public class SearchByNameBeginningMenuAction implements MenuAction {
             return;
         }
         System.out.println("\n*********************************");
-        System.out.println("Поиск по началу имени");
-        System.out.print("Введите имя: ");
+        System.out.println("Поиск по имени");
+        System.out.print("Введите имя или его часть: ");
         String nameToSearch = sc.nextLine();
 
-        List<Contact> foundContactsList = contactsService.searchByNameBeginning(nameToSearch);
+        List<Contact> foundContactsList = contactsService.searchByName(nameToSearch);
 
-        if (foundContactsList.size() != 0) {
+        if (foundContactsList != null && foundContactsList.size() != 0) {
             System.out.println("Найдены следующие контакты:");
             foundContactsList.stream().forEach(System.out::println);
         } else {

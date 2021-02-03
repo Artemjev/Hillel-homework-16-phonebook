@@ -1,18 +1,18 @@
-package com.hillel.artemjev.phonebook.service;
+package com.hillel.artemjev.phonebook.service.contacts;
 
-import com.hillel.artemjev.phonebook.contact.Contact;
-import com.hillel.artemjev.phonebook.contact.ContactType;
+import com.hillel.artemjev.phonebook.domain.Contact;
+import com.hillel.artemjev.phonebook.domain.ContactType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class InMemoryContactsService implements ContactsService {
+public class ContactsInMemoryService implements ContactsService {
 
     private List<Contact> contacts;
 
-    public InMemoryContactsService() {
+    public ContactsInMemoryService() {
         contacts = new ArrayList<>();
     }
 
@@ -43,5 +43,16 @@ public class InMemoryContactsService implements ContactsService {
         return contacts.stream()
                 .filter(contact -> contact.getName().toUpperCase().startsWith(nameToSearch.toUpperCase()))
                 .collect(Collectors.toList());
+    }
+
+    //------------------------------------------------------------------
+    @Override
+    public List<Contact> searchByName(String nameToSearch) {
+        return null;
+    }
+
+    @Override
+    public List<Contact> searchByContact(String contactToSearch) {
+        return null;
     }
 }

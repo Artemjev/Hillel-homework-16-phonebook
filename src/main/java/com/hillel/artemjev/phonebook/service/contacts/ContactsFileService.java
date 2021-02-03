@@ -1,8 +1,8 @@
-package com.hillel.artemjev.phonebook.service;
+package com.hillel.artemjev.phonebook.service.contacts;
 
-import com.hillel.artemjev.phonebook.contact.Contact;
+import com.hillel.artemjev.phonebook.domain.Contact;
 import com.hillel.artemjev.phonebook.util.ContactParser;
-import com.hillel.artemjev.phonebook.contact.ContactType;
+import com.hillel.artemjev.phonebook.domain.ContactType;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -10,11 +10,11 @@ import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FileContactsService implements ContactsService {
+public class ContactsFileService implements ContactsService {
     private File file;
     private ContactParser parser;
 
-    public FileContactsService(File file, ContactParser parser) {
+    public ContactsFileService(File file, ContactParser parser) {
         this.file = file;
         this.parser = parser;
         try {
@@ -24,7 +24,7 @@ public class FileContactsService implements ContactsService {
         }
     }
 
-    public FileContactsService(String filePathname, ContactParser parser) {
+    public ContactsFileService(String filePathname, ContactParser parser) {
         this.file = new File(filePathname);
         this.parser = parser;
         try {
@@ -110,5 +110,16 @@ public class FileContactsService implements ContactsService {
             e.printStackTrace();
         }
         return contactList;
+    }
+
+    //------------------------------------------------------------------
+    @Override
+    public List<Contact> searchByName(String nameToSearch) {
+        return null;
+    }
+
+    @Override
+    public List<Contact> searchByContact(String contactToSearch) {
+        return null;
     }
 }

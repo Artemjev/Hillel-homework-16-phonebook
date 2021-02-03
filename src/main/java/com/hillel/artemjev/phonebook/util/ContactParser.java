@@ -1,7 +1,7 @@
 package com.hillel.artemjev.phonebook.util;
 
-import com.hillel.artemjev.phonebook.contact.Contact;
-import com.hillel.artemjev.phonebook.contact.ContactType;
+import com.hillel.artemjev.phonebook.domain.Contact;
+import com.hillel.artemjev.phonebook.domain.ContactType;
 
 import java.util.LinkedList;
 import java.util.List;
