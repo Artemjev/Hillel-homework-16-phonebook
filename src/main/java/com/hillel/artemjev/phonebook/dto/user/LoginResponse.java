@@ -1,4 +1,4 @@
-package com.hillel.artemjev.phonebook.dto;
+package com.hillel.artemjev.phonebook.dto.user;
 
 import lombok.Data;
 

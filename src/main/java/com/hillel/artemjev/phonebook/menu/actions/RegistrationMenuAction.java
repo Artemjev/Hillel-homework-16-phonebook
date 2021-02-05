@@ -1,11 +1,12 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.dto.LoginResponse;
-import com.hillel.artemjev.phonebook.dto.RegistrationResponse;
+import com.hillel.artemjev.phonebook.entities.User;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
-import com.hillel.artemjev.phonebook.service.user.UserService;
+import com.hillel.artemjev.phonebook.services.user.UserService;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 @AllArgsConstructor
@@ -24,14 +25,16 @@ public class RegistrationMenuAction implements MenuAction {
         System.out.print("введите дату рождения: ");
         String dateBorn = sc.nextLine();
 
-        RegistrationResponse registrationResponse = userService.registration(login, password, dateBorn);
-
-        if (registrationResponse.isSuccess()) {
-            LoginResponse loginResponse = userService.login(login, password);
-            userService.refreshToken(loginResponse.getToken());
-        } else {
-            //тут нужно выбросить свой эксепшн!!!
-            System.out.println(registrationResponse.getError());
+        LocalDate date = LocalDate.parse(dateBorn, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        User user = new User();
+        user.setLogin(login);
+        user.setPassword(password);
+        user.setDateBorn(date);
+        try {
+            userService.register(user);
+        } catch (RuntimeException e) {
+            System.out.println("Регистрация не осуществленна: " + e.getMessage());
+            return;
         }
     }
 
@@ -42,6 +45,6 @@ public class RegistrationMenuAction implements MenuAction {
 
     @Override
     public boolean isVisible() {
-        return !userService.hasToken();
+        return !userService.isAuth();
     }
 }

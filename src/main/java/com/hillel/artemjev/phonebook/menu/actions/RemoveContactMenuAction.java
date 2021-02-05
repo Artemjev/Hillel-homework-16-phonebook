@@ -1,6 +1,6 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.service.contacts.ContactsService;
+import com.hillel.artemjev.phonebook.services.contacts.ContactsService;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
 
 import java.util.Scanner;
@@ -50,6 +50,6 @@ public class RemoveContactMenuAction implements MenuAction {
 
     @Override
     public boolean isVisible() {
-        return contactsService.hasToken();
+        return contactsService.isAuth();
     }
 }

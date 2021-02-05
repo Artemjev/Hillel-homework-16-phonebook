@@ -1,7 +1,7 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.domain.ContactType;
-import com.hillel.artemjev.phonebook.service.contacts.ContactsService;
+import com.hillel.artemjev.phonebook.entities.Contact;
+import com.hillel.artemjev.phonebook.services.contacts.ContactsService;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
 
 import java.util.Scanner;
@@ -18,7 +18,7 @@ public class AddContactMenuAction implements MenuAction {
 
     @Override
     public void doAction() {
-        if (!contactsService.hasToken()) {
+        if (!contactsService.isAuth()) {
             System.out.println("Время сеанса истекло. Неообходимо повторно войти в систему.\n");
             return;
         }
@@ -28,9 +28,9 @@ public class AddContactMenuAction implements MenuAction {
         String name = sc.nextLine();
 
         System.out.print("Введите тип контакта (PHONE/EMAIL): ");
-        ContactType type;
+        Contact.ContactType type;
         try {
-            type = ContactType.valueOf(sc.nextLine().toUpperCase());
+            type = Contact.ContactType.valueOf(sc.nextLine().toUpperCase());
         } catch (IllegalArgumentException e) {
             System.out.println("Некорректно введен тип контакта.");
             System.out.println("Контакт не добавлен.");
@@ -39,15 +39,26 @@ public class AddContactMenuAction implements MenuAction {
         }
 
         System.out.printf("Введите %s: ", type);
-        String contact = sc.nextLine();
-        if (!validateContact(contact, type)) {
+        String contactStr = sc.nextLine();
+        if (!validateContact(contactStr, type)) {
             System.out.printf("Некорректный формат ввода %s.\n", type);
             System.out.println("Контакт не добавлен.");
             System.out.println("*********************************");
             return;
         }
+        Contact contact = new Contact();
+        contact.setName(name);
+        contact.setType(type);
+        contact.setContact(contactStr);
 
-        contactsService.add(name, type, contact);
+        try {
+            contactsService.add(contact);
+        } catch (RuntimeException e) {
+            System.out.println("Контакт не добавлен: " + e.getMessage());
+            return;
+        }
+
+
         System.out.println("Контакт добавлен");
         System.out.println("*********************************");
     }
@@ -59,11 +70,11 @@ public class AddContactMenuAction implements MenuAction {
 
     @Override
     public boolean isVisible() {
-        return contactsService.hasToken();
+        return contactsService.isAuth();
     }
 
     //------------------------------------------------------------------------------
-    private boolean validateContact(String contact, ContactType type) {
+    private boolean validateContact(String contact, Contact.ContactType type) {
         boolean isValid = false;
         switch (type) {
             case PHONE:

@@ -35,9 +35,6 @@ public class NioFileUtil {
                     onLine.accept(parts[i]);
                 }
 
-                //Все-таки есть проблема: если то, что считал буфер заканчивается на "\n", то занчение последней
-                // считанной строки склеивается со следующей считанной строкой.
-                //Поэтому пришлось сделать такое ветвление if/else.
                 if (!stringBuffer.endsWith("\n")) {
                     stringBuffer = parts[parts.length - 1];
                 } else {

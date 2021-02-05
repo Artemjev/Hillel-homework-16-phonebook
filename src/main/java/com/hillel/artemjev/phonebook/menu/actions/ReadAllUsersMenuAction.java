@@ -1,8 +1,8 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.domain.User;
+import com.hillel.artemjev.phonebook.entities.User;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
-import com.hillel.artemjev.phonebook.service.user.UserService;
+import com.hillel.artemjev.phonebook.services.user.UserService;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -16,19 +16,19 @@ public class ReadAllUsersMenuAction implements MenuAction {
     @Override
     public void doAction() {
         System.out.println("\n*********************************");
-        System.out.println("Список пользователей (доступный без автоизации):");
+        System.out.println("Список пользователей:");
         List<User> users = userService.getAll();
         users.stream().forEach(user -> System.out.println(user));
     }
 
     @Override
     public String getName() {
-        return "Показать всех пользователей (без автоизации)";
+        return "Показать всех пользователей";
     }
 
     @Override
     public boolean isVisible() {
-        return !userService.hasToken();
+        return !userService.isAuth();
     }
 
     @Override

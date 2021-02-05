@@ -1,8 +1,8 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.dto.LoginResponse;
+import com.hillel.artemjev.phonebook.entities.User;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
-import com.hillel.artemjev.phonebook.service.user.UserService;
+import com.hillel.artemjev.phonebook.services.user.UserService;
 import lombok.AllArgsConstructor;
 
 import java.util.Scanner;
@@ -25,19 +25,20 @@ public class LoginMenuAction implements MenuAction {
         System.out.print("введите пароль: ");
         String password = sc.nextLine();
 
-        LoginResponse loginResponse = userService.login(login, password);
-
-        if (loginResponse.isSuccess()) {
-            userService.refreshToken(loginResponse.getToken());
-        } else {
-            //тут нужно выбросить свой эксепшн
-            System.out.println(loginResponse.getError());
+        User user = new User();
+        user.setLogin(login);
+        user.setPassword(password);
+        try {
+            userService.login(user);
+        } catch (RuntimeException e) {
+            System.out.println("Логин не состоялся: " + e.getMessage());
+            return;
         }
     }
 
     @Override
     public boolean isVisible() {
-        return !userService.hasToken();
+        return !userService.isAuth();
     }
 
     @Override

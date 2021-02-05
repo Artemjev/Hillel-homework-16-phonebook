@@ -1,4 +1,4 @@
-package com.hillel.artemjev.phonebook.service;
+package com.hillel.artemjev.phonebook.services;
 
 import lombok.Getter;
 
@@ -16,8 +16,8 @@ public class AccessToken {
     }
 
     public boolean isValid() {
-//        return token != null && getLifetimeInSeconds() < 55;
-        return token != null && getLifetimeInSeconds() < 3555;
+        if (token == null || time == null) return false;
+        return getLifetimeInSeconds() < 3555;
     }
 
     //----------------------------------------------------------------

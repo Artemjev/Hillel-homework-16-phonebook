@@ -1,8 +1,8 @@
 package com.hillel.artemjev.phonebook.menu.actions;
 
-import com.hillel.artemjev.phonebook.domain.Contact;
+import com.hillel.artemjev.phonebook.entities.Contact;
 import com.hillel.artemjev.phonebook.menu.MenuAction;
-import com.hillel.artemjev.phonebook.service.contacts.ContactsService;
+import com.hillel.artemjev.phonebook.services.contacts.ContactsService;
 
 import java.util.List;
 import java.util.Scanner;
@@ -23,7 +23,7 @@ public class SearchByNameMenuAction implements MenuAction {
 
     @Override
     public void doAction() {
-        if (!contactsService.hasToken()) {
+        if (!contactsService.isAuth()) {
             System.out.println("Время сеанса истекло. Неообходимо повторно войти в систему.\n");
             return;
         }
@@ -32,7 +32,7 @@ public class SearchByNameMenuAction implements MenuAction {
         System.out.print("Введите имя или его часть: ");
         String nameToSearch = sc.nextLine();
 
-        List<Contact> foundContactsList = contactsService.searchByName(nameToSearch);
+        List<Contact> foundContactsList = contactsService.findByName(nameToSearch);
 
         if (foundContactsList != null && foundContactsList.size() != 0) {
             System.out.println("Найдены следующие контакты:");
@@ -45,6 +45,6 @@ public class SearchByNameMenuAction implements MenuAction {
 
     @Override
     public boolean isVisible() {
-        return contactsService.hasToken();
+        return contactsService.isAuth();
     }
 }

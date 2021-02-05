@@ -1,11 +1,9 @@
 package com.hillel.artemjev.phonebook.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class ContactAddResponse {
+public class StatusResponse {
     private String status;
     private String error;
 
@@ -13,4 +11,3 @@ public class ContactAddResponse {
         return "ok".equalsIgnoreCase(status);
     }
 }
-
